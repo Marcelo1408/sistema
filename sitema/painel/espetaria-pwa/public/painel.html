@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Atendimento - Churrasquinho Do Chef</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f5f5f5; padding: 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .painel-container { max-width: 900px; margin: 0 auto; background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    h1 { color: #EA1D2C; font-size: 24px; margin-bottom: 20px; }
+    h3 { color: #333; margin: 16px 0 10px 0; border-bottom: 2px solid #EA1D2C; padding-bottom: 6px; }
+    .form-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; align-items: flex-end; }
+    .form-row label { flex: 1; min-width: 140px; font-size: 13px; font-weight: 600; color: #555; }
+    .form-row input, .form-row select { width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+    .form-row input:focus, .form-row select:focus { border-color: #EA1D2C; outline: none; }
+    .flex { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .btn-primario { background: #EA1D2C; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1em; cursor: pointer; transition: 0.2s; }
+    .btn-primario:hover { background: #c9182a; transform: scale(1.02); }
+    .btn-primario:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-secundario { background: #666; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+    .btn-secundario:hover { background: #555; }
+    .btn-pequeno { padding: 4px 12px; background: #EA1D2C; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.2s; }
+    .btn-pequeno:hover { background: #c9182a; }
+    .btn-pequeno:disabled { opacity: 0.4; cursor: not-allowed; }
+    .produto-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #eee; }
+    .produto-item .info { flex: 1; }
+    .produto-item .preco { font-weight: bold; color: #EA1D2C; }
+    .sacola-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #ddd; align-items: center; }
+    .total { font-size: 1.2em; font-weight: bold; color: #EA1D2C; }
+    .pix-area { background: #f0f8ff; padding: 16px; border-radius: 8px; margin-top: 16px; border: 1px solid #cce5ff; }
+    .pix-area img { max-width: 200px; display: block; margin: 8px auto; }
+    .pix-area textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace; font-size: 12px; resize: vertical; }
+    #listaProdutos { max-height: 300px; overflow-y: auto; border: 1px solid #eee; border-radius: 6px; padding: 8px; background: #fafafa; }
+    #statusMsg { margin-top: 12px; padding: 10px; border-radius: 6px; }
+    #statusPromocao { margin-top: 8px; padding: 8px; border-radius: 6px; }
+    .sucesso { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .erro { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    .oculto { display: none !important; }
+    #infoLoja { font-size: 14px; color: #666; margin-bottom: 12px; padding: 8px; background: #f8f8f8; border-radius: 6px; }
+    .secao { margin-bottom: 16px; }
+    hr { margin: 20px 0; border: none; border-top: 2px solid #eee; }
+    @media (max-width: 600px) {
+      .form-row { flex-direction: column; }
+      .form-row label { min-width: auto; }
+    }
+  </style>
+</head>
+<body>
+<div class="painel-container">
+
+  <h1>🧑‍🍳 Painel de Atendimento</h1>
+  <div id="infoLoja">Carregando...</div>
+
+  <!-- DADOS DO CLIENTE -->
+  <h3>👤 Dados do Cliente</h3>
+  <div class="form-row">
+    <label>Nome * <input id="cliNome" placeholder="Nome completo"></label>
+    <label>WhatsApp * <input id="cliTelefone" placeholder="(19) 9 0000-0000"></label>
+  </div>
+  <div class="form-row">
+    <label>CEP <input id="cliCep" placeholder="13183-623"></label>
+    <label>Rua <input id="cliRua" placeholder="Rua Vitória"></label>
+    <label>Número <input id="cliNumero" placeholder="560"></label>
+    <button class="btn-secundario" id="btnCalcularEntrega" style="padding:8px 16px;">🔍 Calcular entrega</button>
+  </div>
+  <div class="form-row">
+    <label>Bairro <input id="cliBairro" placeholder="Parque do Horto"></label>
+    <label>Cidade <input id="cliCidade" placeholder="Hortolândia"></label>
+    <label>UF <input id="cliUf" placeholder="SP" maxlength="2"></label>
+  </div>
+  <div class="form-row">
+    <label>Complemento <input id="cliComplemento" placeholder="Casa fundo"></label>
+    <label>Referência <input id="cliReferencia" placeholder="Portão verde"></label>
+  </div>
+
+  <!-- CARDÁPIO -->
+  <h3>🍖 Cardápio</h3>
+  <div style="margin-bottom: 8px;">
+    <input id="inputBuscaPainel" type="search" placeholder="Buscar produto..." style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
+  </div>
+  <div id="listaProdutos"></div>
+
+  <!-- SACOLA -->
+  <h3>🛒 Sacola</h3>
+  <div id="sacolaPainel" style="min-height: 40px;"></div>
+  <div class="flex" style="justify-content: space-between; margin-top: 8px;">
+    <div><strong>Subtotal:</strong> <span id="subtotalPainel">R$ 0,00</span></div>
+    <div><strong>Taxa entrega:</strong> <span id="taxaPainel">R$ 0,00</span></div>
+    <div class="total"><strong>Total:</strong> <span id="totalPainel">R$ 0,00</span></div>
+  </div>
+
+  <!-- CONFIGURAÇÕES -->
+  <h3>📦 Configurações do Pedido</h3>
+  <div class="form-row">
+    <label>Tipo de pedido:
+      <select id="tipoPedidoPainel">
+        <option value="entrega">🛵 Entregar (cobra frete)</option>
+        <option value="retirada">🏠 Retirar (balcão - sem frete)</option>
+      </select>
+    </label>
+    <label>Forma de pagamento:
+      <select id="pagamentoPainel">
+        <option value="PIX">💰 PIX</option>
+        <option value="RETIRADA_PRESENCIAL">💳 Pagar na retirada</option>
+      </select>
+    </label>
+  </div>
+
+  <!-- AÇÕES -->
+  <div class="flex" style="margin-top: 16px;">
+    <button class="btn-primario" id="btnEnviarPedido">📦 Enviar Pedido</button>
+    <button class="btn-primario" id="btnGerarPix">💳 Gerar PIX</button>
+    <button class="btn-secundario" id="btnLimpar">🗑️ Limpar</button>
+  </div>
+
+  <div id="statusMsg"></div>
+
+  <!-- ÁREA PIX -->
+  <div id="pixArea" class="pix-area oculto">
+    <h4>💰 PIX gerado para o pedido #<span id="pixPedidoId"></span></h4>
+    <img id="pixQrPainel" src="" alt="QR Code PIX">
+    <p><strong>Código PIX (copiar e colar):</strong></p>
+    <textarea id="pixCopiaPainel" rows="3" readonly></textarea>
+    <div class="flex" style="margin-top: 8px;">
+      <button class="btn-secundario" id="btnCopiarPixPainel">📋 Copiar código</button>
+      <button class="btn-secundario" id="btnEnviarWhatsApp">📱 Enviar via WhatsApp</button>
+    </div>
+  </div>
+
+ 
+
+<script>
+// ============================================================
+// PAINEL DE ATENDIMENTO - PADRONIZADO COM SALVAMENTO DO BOT
+// Envia dados no MESMO FORMATO que o bot WhatsApp
+// ============================================================
+
+const $ = s => document.querySelector(s);
+const API = '/api';
+const BOT_URL = window.location.origin + ':4000';
+const fmt = v => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+const state = {
+  produtos: [],
+  carrinho: [],
+  pedidoId: null,
+  entrega: null,
+  tipoPedido: 'entrega',
+  pagamento: 'PIX',
+  valorTotal: 0,
+  qrCodeBase64: null,
+  qrCode: null
+};
+
+// ============================================================
+// 1. CARREGAR DADOS
+// ============================================================
+async function carregarLoja() {
+  try {
+    const r = await fetch(API + '/loja/status');
+    const loja = await r.json();
+    $('#infoLoja').textContent = `${loja.nome_empresa} - ${loja.aberta ? '🟢 Aberto' : '🔴 Fechado'}`;
+  } catch (e) {
+    $('#infoLoja').textContent = 'Erro ao carregar loja';
+  }
+}
+
+async function carregarProdutos() {
+  try {
+    const r = await fetch(API + '/produtos');
+    if (!r.ok) throw new Error('Erro ao carregar produtos');
+    state.produtos = await r.json();
+    renderizarProdutos();
+  } catch (e) {
+    $('#listaProdutos').innerHTML = `<p class="erro">Erro: ${e.message}</p>`;
+  }
+}
+
+// ============================================================
+// 2. RENDERIZAR PRODUTOS
+// ============================================================
+function renderizarProdutos(filtro = '') {
+  const container = $('#listaProdutos');
+  const termo = filtro.toLowerCase();
+  let prods = state.produtos;
+  if (termo) {
+    prods = prods.filter(p =>
+      p.nome.toLowerCase().includes(termo) ||
+      (p.descricao || '').toLowerCase().includes(termo)
+    );
+  }
+  if (!prods.length) {
+    container.innerHTML = '<p>Nenhum produto encontrado.</p>';
+    return;
+  }
+  container.innerHTML = prods.map(p => `
+    <div class="produto-item" data-id="${p.id}">
+      <div class="info">
+        <strong>${p.nome}</strong> - ${fmt(p.preco)}
+        <br><small>${p.descricao || ''}</small>
+      </div>
+      <div>
+        <button class="btn-pequeno adicionar-produto" data-id="${p.id}" data-preco="${p.preco}" data-nome="${p.nome}">+ Adicionar</button>
+      </div>
+    </div>
+  `).join('');
+
+  container.querySelectorAll('.adicionar-produto').forEach(btn => {
+    btn.addEventListener('click', function() {
+      adicionarAoCarrinho(parseInt(this.dataset.id), this.dataset.nome, parseFloat(this.dataset.preco));
+    });
+  });
+}
+
+// ============================================================
+// 3. CARRINHO
+// ============================================================
+function adicionarAoCarrinho(id, nome, preco) {
+  const existente = state.carrinho.find(i => i.id === id);
+  if (existente) {
+    existente.quantidade += 1;
+    existente.subtotal = existente.quantidade * existente.preco;
+  } else {
+    state.carrinho.push({ id, nome, preco, quantidade: 1, subtotal: preco });
+  }
+  atualizarSacola();
+  // Recalcula entrega se necessário
+  if (state.tipoPedido === 'entrega' && temEnderecoCompleto()) {
+    calcularEntrega();
+  }
+}
+
+function removerDoCarrinho(id) {
+  const index = state.carrinho.findIndex(i => i.id === id);
+  if (index !== -1) {
+    const item = state.carrinho[index];
+    if (item.quantidade > 1) {
+      item.quantidade -= 1;
+      item.subtotal = item.quantidade * item.preco;
+    } else {
+      state.carrinho.splice(index, 1);
+    }
+    atualizarSacola();
+    if (state.tipoPedido === 'entrega' && temEnderecoCompleto()) {
+      calcularEntrega();
+    }
+  }
+}
+
+function temEnderecoCompleto() {
+  const cep = $('#cliCep').value.replace(/\D/g, '');
+  const rua = $('#cliRua').value.trim();
+  const num = $('#cliNumero').value.trim();
+  return cep.length === 8 && rua && num;
+}
+
+function atualizarSacola() {
+  const container = $('#sacolaPainel');
+  if (!state.carrinho.length) {
+    container.innerHTML = '<p>Sacola vazia.</p>';
+  } else {
+    container.innerHTML = state.carrinho.map(i => `
+      <div class="sacola-item">
+        <span>${i.quantidade}x ${i.nome} - ${fmt(i.subtotal)}</span>
+        <div>
+          <button class="btn-pequeno remover-produto" data-id="${i.id}">-</button>
+          <button class="btn-pequeno adicionar-produto" data-id="${i.id}" data-preco="${i.preco}" data-nome="${i.nome}">+</button>
+        </div>
+      </div>
+    `).join('');
+
+    container.querySelectorAll('.remover-produto').forEach(btn => {
+      btn.addEventListener('click', function() {
+        removerDoCarrinho(parseInt(this.dataset.id));
+      });
+    });
+    container.querySelectorAll('.adicionar-produto').forEach(btn => {
+      btn.addEventListener('click', function() {
+        adicionarAoCarrinho(parseInt(this.dataset.id), this.dataset.nome, parseFloat(this.dataset.preco));
+      });
+    });
+  }
+  atualizarTotais();
+}
+
+// ============================================================
+// 4. CÁLCULO DE ENTREGA
+// ============================================================
+async function calcularEntrega() {
+  if (!temEnderecoCompleto()) {
+    state.entrega = null;
+    atualizarTotais();
+    return;
+  }
+
+  const body = {
+    cep: $('#cliCep').value.replace(/\D/g, ''),
+    endereco: $('#cliRua').value.trim(),
+    numero: $('#cliNumero').value.trim(),
+    bairro: $('#cliBairro').value.trim(),
+    cidade: $('#cliCidade').value.trim(),
+    uf: $('#cliUf').value.trim().toUpperCase()
+  };
+
+  try {
+    const resp = await fetch(API + '/calculo-de-entrega', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await resp.json();
+
+    if (data.bloqueada || !data.calculada) {
+      state.entrega = { taxa: 0, km: 0, bloqueada: true, mensagem: data.mensagem || 'Endereço não encontrado' };
+      mostrarStatus('⚠️ ' + (data.mensagem || 'Endereço fora da área de entrega.'), 'erro');
+    } else {
+      state.entrega = { taxa: data.taxa || 0, km: data.km || 0, bloqueada: false };
+      mostrarStatus(`✅ Entrega calculada: ${data.km} km - Taxa: ${fmt(data.taxa)}`, 'sucesso');
+    }
+  } catch (e) {
+    console.error('Erro ao calcular entrega:', e);
+    state.entrega = { taxa: 0, km: 0, bloqueada: true, mensagem: 'Erro na API de entrega' };
+    mostrarStatus('⚠️ Erro ao calcular entrega. Verifique a conexão.', 'erro');
+  }
+  atualizarTotais();
+}
+
+// ============================================================
+// 5. TOTAIS
+// ============================================================
+function getTaxa() {
+  if (state.tipoPedido === 'retirada') return 0;
+  if (state.entrega && !state.entrega.bloqueada) return state.entrega.taxa || 0;
+  return 0;
+}
+
+function subtotalCarrinho() {
+  return state.carrinho.reduce((s, i) => s + i.subtotal, 0);
+}
+
+function totalPedido() {
+  return subtotalCarrinho() + getTaxa();
+}
+
+function atualizarTotais() {
+  const sub = subtotalCarrinho();
+  const taxa = getTaxa();
+  const total = sub + taxa;
+  state.valorTotal = total;
+  $('#subtotalPainel').textContent = fmt(sub);
+  $('#taxaPainel').textContent = fmt(taxa);
+  $('#totalPainel').textContent = fmt(total);
+}
+
+// ============================================================
+// 6. COLETAR DADOS DO CLIENTE (FORMATADO IGUAL AO BOT)
+// ============================================================
+function getDadosClienteFormatados() {
+  const nome = $('#cliNome').value.trim();
+  const telefone = $('#cliTelefone').value.replace(/\D/g, '');
+  
+  const cep = $('#cliCep').value.replace(/\D/g, '');
+  const rua = $('#cliRua').value.trim();
+  const numero = $('#cliNumero').value.trim();
+  const bairro = $('#cliBairro').value.trim();
+  const cidade = $('#cliCidade').value.trim();
+  const uf = $('#cliUf').value.trim().toUpperCase();
+  const complemento = $('#cliComplemento').value.trim();
+  const referencia = $('#cliReferencia').value.trim();
+
+  // Monta endereço completo EXATAMENTE como o bot faz em montarEnderecoCompleto()
+  let partes = [];
+  if (rua) partes.push(numero ? `${rua}, ${numero}` : rua);
+  if (complemento) partes.push(complemento);
+  if (bairro && !rua.toLowerCase().includes(bairro.toLowerCase())) partes.push(bairro);
+  if (cidade && uf) {
+    const cidadeUf = `${cidade}/${uf}`;
+    if (!rua.toLowerCase().includes(cidade.toLowerCase())) partes.push(cidadeUf);
+  }
+  if (cep) partes.push(cep);
+  
+  const enderecoCompleto = partes.join(' - ') || 'Endereco nao informado';
+  const refLimpa = referencia || 'Nao informado';
+
+  return {
+    nome,
+    telefone,
+    enderecoCompleto,
+    referencia: refLimpa,
+    // Dados individuais caso a API precise separar
+    cep, rua, numero, bairro, cidade, uf, complemento, referencia
+  };
+}
+
+// ============================================================
+// 7. ATUALIZAR BOTÃO PIX
+// ============================================================
+function atualizarBotaoPix() {
+  const btn = $('#btnGerarPix');
+  if (!btn) return;
+
+  const deveHabilitar = state.pagamento === 'PIX';
+  btn.disabled = !deveHabilitar;
+  
+  if (deveHabilitar) {
+    btn.title = state.pedidoId 
+      ? `Gerar PIX para pedido #${state.pedidoId}` 
+      : 'Clique para criar pedido e gerar PIX automaticamente';
+  } else {
+    btn.title = 'Selecione PIX como forma de pagamento';
+  }
+}
+
+// ============================================================
+// 8. CRIAR PEDIDO - MESMO CAMINHO DO BOT WHATSAPP
+// ============================================================
+async function criarPedidoInternamente() {
+  const cliente = getDadosClienteFormatados();
+  
+  // Validações
+  if (!cliente.nome || cliente.telefone.length < 10) {
+    throw new Error('Preencha nome e WhatsApp do cliente.');
+  }
+  if (state.carrinho.length === 0) {
+    throw new Error('Adicione pelo menos um item à sacola.');
+  }
+  if (state.tipoPedido === 'entrega' && !temEnderecoCompleto()) {
+    throw new Error('Preencha CEP, rua e número para entrega.');
+  }
+
+  // Calcula entrega se necessário
+  if (state.tipoPedido === 'entrega' && (!state.entrega || state.entrega.bloqueada)) {
+    await calcularEntrega();
+    if (state.entrega && state.entrega.bloqueada) {
+      throw new Error('Endereço fora da área de entrega.');
+    }
+  }
+
+  const taxa = getTaxa();
+  const total = totalPedido();
+
+  // PAYLOAD IDÊNTICO AO QUE O BOT ENVIA EM salvarPedido()
+  // Com adição de origem='SITE' para diferenciar no banco
+  const body = {
+    nome: cliente.nome,
+    telefone: cliente.telefone,
+    endereco: cliente.enderecoCompleto,
+    referencia: cliente.referencia,
+    total: +total.toFixed(2),
+    taxa_entrega: taxa,
+    distancia_km: state.entrega?.km || 0,
+    pagamento: state.pagamento,
+    origem: 'SITE',                    // ← Diferencia do bot ('WHATSAPP')
+    status: 'AGUARDANDO_PIX',          // ← Status inicial igual ao do banco
+    status_pagamento: 'PENDENTE',      // ← Status pagamento padrão
+    observacao: `Endereço: ${cliente.enderecoCompleto} | Referência: ${cliente.referencia}`,
+    itens: state.carrinho.map(i => ({
+      id: i.id,
+      produto_id: i.id,                // ← Campo obrigatório FK itens_pedido
+      nome: i.nome,
+      nome_item: i.nome,               // ← Campo da tabela itens_pedido
+      preco: i.preco,
+      valor_unitario: i.preco,         // ← Campo da tabela itens_pedido
+      quantidade: i.quantidade,
+      subtotal: i.subtotal,
+      tipo_item: 'produto',            // ← Campo NOT NULL da tabela
+      adicionais: []
+    }))
+  };
+
+  const r = await fetch(API + '/pedidos', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  
+  const resposta = await r.json();
+  if (!r.ok) throw new Error(resposta.erro || 'Erro ao salvar pedido');
+  
+  const pedidoId = resposta.pedido_id || resposta.id || resposta.pedidoId || resposta.order_id;
+  if (!pedidoId) throw new Error('Backend não retornou ID do pedido');
+  
+  return pedidoId;
+}
+
+// ============================================================
+// 9. GERAR PIX
+// ============================================================
+async function gerarPix() {
+  if (state.pagamento !== 'PIX') {
+    mostrarStatus('Selecione PIX como forma de pagamento.', 'erro');
+    return;
+  }
+
+  const btn = $('#btnGerarPix');
+  const textoOriginal = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Processando...';
+
+  try {
+    if (!state.pedidoId) {
+      mostrarStatus('📦 Criando pedido...', 'info');
+      state.pedidoId = await criarPedidoInternamente();
+      console.log(`✅ Pedido criado: #${state.pedidoId}`);
+      mostrarStatus(`✅ Pedido #${state.pedidoId} criado! Gerando PIX...`, 'sucesso');
+    }
+
+    btn.textContent = 'Gerando PIX...';
+    const r = await fetch(API + '/pix/criar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pedido_id: state.pedidoId })
+    });
+    const pix = await r.json();
+    if (!r.ok) throw new Error(pix.erro || 'Erro ao gerar PIX');
+
+    state.qrCodeBase64 = pix.qr_code_base64;
+    state.qrCode = pix.qr_code;
+
+    $('#pixArea').classList.remove('oculto');
+    $('#pixPedidoId').textContent = state.pedidoId;
+    $('#pixQrPainel').src = 'data:image/png;base64,' + pix.qr_code_base64;
+    $('#pixCopiaPainel').value = pix.qr_code;
+
+    mostrarStatus(`✅ PIX gerado para o pedido #${state.pedidoId}`, 'sucesso');
+    await enviarPixViaBot();
+
+  } catch (e) {
+    console.error('❌ Erro:', e);
+    mostrarStatus('❌ ' + e.message, 'erro');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = textoOriginal;
+    atualizarBotaoPix();
+  }
+}
+
+// ============================================================
+// 10. ENVIAR PEDIDO (Fluxo Manual)
+// ============================================================
+async function enviarPedido() {
+  const btn = $('#btnEnviarPedido');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  try {
+    state.pedidoId = await criarPedidoInternamente();
+    mostrarStatus(`✅ Pedido #${state.pedidoId} criado com sucesso!`, 'sucesso');
+    atualizarBotaoPix();
+    
+    if (state.pagamento !== 'PIX') {
+      $('#pixArea').classList.add('oculto');
+    }
+  } catch (e) {
+    mostrarStatus('❌ ' + e.message, 'erro');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📦 Enviar Pedido';
+  }
+}
+
+// ============================================================
+// 11. ENVIAR PIX VIA BOT
+// ============================================================
+async function enviarPixViaBot() {
+  const telefone = $('#cliTelefone').value.replace(/\D/g, '');
+  if (!telefone) return false;
+
+  try {
+    await fetch(BOT_URL + '/enviar-mensagem', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        telefone: telefone,
+        mensagem: '\u2705 Pedido #' + state.pedidoId + ' confirmado!\n\ud83d\udcb0 Valor: ' + fmt(state.valorTotal)
+      })
+    });
+
+    await fetch(BOT_URL + '/enviar-mensagem', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        telefone: telefone,
+        mensagem: '\ud83d\udccb C\u00f3digo PIX copie e cole no app do banco:\n\n' + state.qrCode
+      })
+    });
+
+    await fetch(BOT_URL + '/enviar-imagem', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        telefone: telefone,
+        imagem_base64: state.qrCodeBase64,
+        legenda: 'QR Code PIX - Pedido #' + state.pedidoId
+      })
+    });
+
+    mostrarStatus('\ud83d\udcf1 PIX enviado com sucesso!', 'sucesso');
+    return true;
+  } catch (e) {
+    console.error(e);
+    mostrarStatus('\u26a0\ufe0f PIX gerado mas falhou envio autom\u00e1tico.', 'erro');
+    return false;
+  }
+}
+
+// ============================================================
+// 12. UTILITÁRIOS
+// ============================================================
+function mostrarStatus(msg, tipo = 'info') {
+  const el = $('#statusMsg');
+  el.textContent = msg;
+  el.className = tipo;
+}
+
+function copiarPix() {
+  const texto = $('#pixCopiaPainel').value;
+  if (!texto) { mostrarStatus('Nenhum PIX gerado.', 'erro'); return; }
+  navigator.clipboard.writeText(texto).then(() => {
+    mostrarStatus('✅ Código PIX copiado!', 'sucesso');
+  }).catch(() => {
+    alert('Copie manualmente: ' + texto);
+  });
+}
+
+function limparTudo() {
+  if (!confirm('Tem certeza que deseja limpar todos os dados?')) return;
+  ['cliNome','cliTelefone','cliCep','cliRua','cliNumero','cliBairro','cliCidade','cliUf','cliComplemento','cliReferencia'].forEach(id => $(`#${id}`).value = '');
+  state.carrinho = [];
+  state.pedidoId = null;       // ← IMPORTANTE: Reseta pedido para não reusar ID antigo
+  state.entrega = null;
+  state.qrCodeBase64 = null;
+  state.qrCode = null;
+  $('#pixArea').classList.add('oculto');
+  atualizarSacola();
+  atualizarBotaoPix();
+  mostrarStatus('Dados limpos.', 'info');
+}
+
+function formatarTel(d) {
+  d = String(d || '').replace(/\D/g, '');
+  if (d.length > 11) d = d.slice(0, 11); // ← Limite máximo
+  if (d.length === 11) return '(' + d.slice(0,2) + ') ' + d.slice(2,7) + '-' + d.slice(7);
+  if (d.length === 10) return '(' + d.slice(0,2) + ') ' + d.slice(2,6) + '-' + d.slice(6);
+  return d;
+}
+
+// ============================================================
+// 13. EVENTOS
+// ============================================================
+function initEventos() {
+  $('#inputBuscaPainel').addEventListener('input', function() {
+    renderizarProdutos(this.value);
+  });
+
+  $('#tipoPedidoPainel').addEventListener('change', function() {
+    state.tipoPedido = this.value;
+    // Resetar pedido quando mudar tipo
+    state.pedidoId = null;
+    if (state.tipoPedido === 'entrega' && temEnderecoCompleto()) {
+      calcularEntrega();
+    } else {
+      state.entrega = null;
+      atualizarTotais();
+    }
+  });
+
+  $('#pagamentoPainel').addEventListener('change', function() {
+    state.pagamento = this.value;
+    state.pedidoId = null; // ← Resetar pedido ao mudar pagamento
+    atualizarBotaoPix();
+    if (state.pagamento !== 'PIX') {
+      $('#pixArea').classList.add('oculto');
+    }
+  });
+
+  $('#btnCalcularEntrega').addEventListener('click', function() {
+    if (state.tipoPedido === 'entrega') {
+      calcularEntrega();
+    } else {
+      mostrarStatus('Para calcular frete, selecione "Entregar" como tipo de pedido.', 'info');
+    }
+  });
+
+  $('#cliCep').addEventListener('blur', async function() {
+    const cep = this.value.replace(/\D/g, '');
+    if (cep.length !== 8) return;
+    try {
+      const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const data = await r.json();
+      if (data.erro) return;
+      $('#cliRua').value = data.logradouro || '';
+      $('#cliBairro').value = data.bairro || '';
+      $('#cliCidade').value = data.localidade || '';
+      $('#cliUf').value = data.uf || '';
+      if (state.tipoPedido === 'entrega' && temEnderecoCompleto()) {
+        await calcularEntrega();
+      }
+    } catch (e) { /* ignora */ }
+  });
+
+  $('#cliTelefone').addEventListener('input', function() {
+    this.value = formatarTel(this.value);
+  });
+
+  // Resetar pedidoId quando dados do cliente mudam
+  ['cliNome','cliTelefone','cliCep','cliRua','cliNumero','cliBairro','cliCidade','cliUf','cliComplemento','cliReferencia'].forEach(id => {
+    $(`#${id}`).addEventListener('input', () => { state.pedidoId = null; });
+  });
+
+  $('#btnEnviarPedido').addEventListener('click', enviarPedido);
+  $('#btnGerarPix').addEventListener('click', gerarPix);
+  $('#btnLimpar').addEventListener('click', limparTudo);
+  $('#btnCopiarPixPainel').addEventListener('click', copiarPix);
+  $('#btnEnviarWhatsApp').addEventListener('click', enviarPixViaBot);
+  
+  // REMOVIDO: $('#btnEnviarPromocao') - elemento não existe no HTML
+}
+
+// ============================================================
+// 14. INICIALIZAÇÃO
+// ============================================================
+async function init() {
+  await carregarLoja();
+  await carregarProdutos();
+  initEventos();
+  atualizarSacola();
+  
+  state.pagamento = 'PIX';
+  $('#pagamentoPainel').value = 'PIX';
+  atualizarBotaoPix();
+  
+  console.log('✅ Painel carregado! Salvamento padronizado com Bot WhatsApp.');
+}
+
+init();
+</script>
+</body>
+</html>

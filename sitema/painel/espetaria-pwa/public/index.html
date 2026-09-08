@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#EA1D2C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Churrasquinho Do Chef - Pedido Online</title>
+
+  <link rel="manifest" href="manifest.json?v=40">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css?v=40">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header>
+    <div class="header-topo">
+      <img id="logoLoja" src="icons/icon-192.png" alt="Logo">
+      <div class="header-info">
+        <h1 id="nomeLoja">Churrasquinho Do Chef</h1>
+        <button class="header-entrega" id="btnEndereco">
+          <span class="entrega-label">Entregar em</span>
+          <span class="entrega-endereco" id="resumoEndereco">Informe seu endere&#231;o &#8250;</span>
+        </button>
+      </div>
+      <span id="badgeLoja" class="badge">&#8230;</span>
+    </div>
+    <div class="busca">
+      <input id="inputBusca" type="search" placeholder="Busque por espetinhos, bebidas&#8230;">
+    </div>
+    <nav id="chipsCategorias" class="chips" aria-label="Categorias"></nav>
+  </header>
+
+  <div id="bannerFechada" class="banner-fechada oculto"></div>
+  <main id="cardapio"><p class="carregando">Carregando card&#225;pio&#8230;</p></main>
+
+  <!-- ===== BARRA SACOLA ===== -->
+  <div id="barraSacola" class="barra-sacola oculto">
+    <button id="btnVerSacola">
+      <span><b id="sacolaQtd">0</b> itens</span>
+      <span>Ver sacola &#8250;</span>
+      <b id="sacolaTotal">R$ 0,00</b>
+    </button>
+  </div>
+
+  <div id="overlay" class="overlay oculto"></div>
+
+  <!-- ===== SHEET: PRODUTO ===== -->
+  <section class="sheet" id="sheetProduto">
+    <div class="sheet-header"><h2 id="prodNome"></h2><button class="fechar" data-close>&#10005;</button></div>
+    <div class="sheet-body">
+      <img id="prodImg" class="prod-modal-img" alt="">
+      <p id="prodDesc" class="prod-desc"></p>
+      <div class="adicionais-titulo oculto" id="adicionaisTitulo">Adicionais</div>
+      <div id="prodAdicionais"></div>
+    </div>
+    <div class="sheet-footer">
+      <div class="stepper">
+        <button id="prodMenos">&#8722;</button><span id="prodQtd">1</span><button id="prodMais">+</button>
+      </div>
+      <button class="btn-primario" id="btnAddCarrinho">Adicionar <span id="prodTotal"></span></button>
+    </div>
+  </section>
+
+  <!-- ===== SHEET: SACOLA ===== -->
+  <section class="sheet" id="sheetSacola">
+    <div class="sheet-header"><h2>Sua sacola</h2><button class="fechar" data-close>&#10005;</button></div>
+    <div class="sheet-body" id="sacolaItens"></div>
+    <div class="sheet-footer">
+      <div class="linha"><span>Subtotal</span><span id="sumSubtotal"></span></div>
+      <div class="linha"><span>Taxa de entrega</span><span id="sumEntrega">&#8212;</span></div>
+      <div class="linha total"><span>Total</span><span id="sumTotal"></span></div>
+      <button class="btn-primario" id="btnContinuar">Continuar</button>
+    </div>
+  </section>
+
+  <!-- ===== SHEET: ENDERECO ===== -->
+  <section class="sheet" id="sheetEndereco">
+    <div class="sheet-header"><h2>Endere&#231;o de entrega</h2><button class="fechar" data-close>&#10005;</button></div>
+    <div class="sheet-body">
+      <div class="form-grid">
+        <label>CEP<input id="fCep" inputmode="numeric" placeholder="13183-623"></label>
+        <label class="col-8">Rua / Avenida<input id="fEndereco" placeholder="Rua Vit&#243;ria"></label>
+        <label class="col-4">N&#250;mero<input id="fNumero" placeholder="560"></label>
+        <label class="col-6">Bairro<input id="fBairro" placeholder="Parque do Horto"></label>
+        <label class="col-6">Cidade<input id="fCidade" placeholder="Hortol&#226;ndia"></label>
+        <label class="col-4">UF<input id="fUf" maxlength="2" placeholder="SP"></label>
+        <label class="col-8">Complemento <small>(opcional)</small><input id="fComplemento" placeholder="Casa fundo"></label>
+        <label class="col-12">Refer&#234;ncia <small>(opcional)</small><input id="fReferencia" placeholder="Port&#227;o verde"></label>
+      </div>
+    </div>
+    <div class="sheet-footer">
+      <button class="btn-primario" id="btnSalvarEndereco">Salvar endere&#231;o</button>
+    </div>
+  </section>
+
+  <!-- ===== SHEET: LOGIN / CADASTRO (WhatsApp) ===== -->
+  <section class="sheet" id="sheetLogin">
+    <div class="sheet-header login-header">
+      <div class="login-titulo">
+        <span class="login-icone" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </span>
+        <div>
+          <h2>Identifique-se</h2>
+          <p class="login-sub">Para finalizar, informe seu WhatsApp</p>
+        </div>
+      </div>
+      <button class="fechar" data-close>&#10005;</button>
+    </div>
+    <div class="sheet-body">
+      <p class="login-intro">Se voce ja pediu conosco, seu cadastro aparece na hora. Se for a primeira vez, criamos seu cadastro automaticamente.</p>
+      <div class="login-campo">
+        <label for="loginTel">WhatsApp (com DDD)</label>
+        <input id="loginTel" inputmode="tel" autocomplete="tel" placeholder="(19) 9 0000-0000">
+      </div>
+      <div class="login-campo oculto" id="loginNomeWrap">
+        <label for="loginNome">Nome completo</label>
+        <input id="loginNome" autocomplete="name" placeholder="Seu nome completo">
+      </div>
+      <div class="login-status" id="loginStatus" hidden></div>
+      <div class="cliente-card oculto" id="clienteCard"></div>
+    </div>
+    <div class="sheet-footer">
+      <button class="btn-primario" id="btnLoginAcao" disabled>Continuar</button>
+    </div>
+  </section>
+
+  <!-- ===== SHEET: PAGAMENTO (COM ENTREGA x RETIRADA) ===== -->
+  <section class="sheet" id="sheetPagamento">
+    <div class="sheet-header"><h2>Finalizar pedido</h2><button class="fechar" data-close>&#10005;</button></div>
+    <div class="sheet-body">
+
+      <!-- RESUMO DO CLIENTE -->
+      <div class="cliente-resumo" id="resumoCliente"></div>
+
+      <!-- TIPO DE PEDIDO: ENTREGA ou RETIRADA -->
+      <div class="pagamento-titulo" style="margin-top: 16px;">Como voc&#234; quer receber?</div>
+      <div class="opcoes-tipo-pedido" style="display: flex; gap: 8px; margin-bottom: 16px;">
+        <label class="opcao-pagamento selecionada" style="flex: 1; text-align: center;" id="labelEntrega">
+          <input type="radio" name="tipoPedido" value="entrega" checked> 
+          🛵 Entregar
+        </label>
+        <label class="opcao-pagamento" style="flex: 1; text-align: center;" id="labelRetirada">
+          <input type="radio" name="tipoPedido" value="retirada"> 
+          🏠 Retirar (balcão)
+        </label>
+      </div>
+
+      <!-- ENDEREÇO (mostrado apenas se for ENTREGA) -->
+      <div id="blocoEnderecoEntrega">
+        <div class="resumo-endereco" id="resumoEnderecoCheckout"></div>
+      </div>
+
+      <!-- AVISO DE RETIRADA (mostrado apenas se for RETIRADA) -->
+      <div id="blocoAvisoRetirada" class="oculto" style="background: #f0f8ff; padding: 12px; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid #EA1D2C;">
+        <strong>📍 Retirada no balcão</strong>
+        <p style="margin: 4px 0 0; font-size: 14px; color: #555;">Você não pagará taxa de entrega. Basta retirar no nosso estabelecimento.</p>
+      </div>
+
+      <!-- FORMAS DE PAGAMENTO -->
+      <div class="pagamento-titulo">Forma de pagamento</div>
+
+      <!-- Opção 1: PIX (sempre disponível) -->
+      <label class="opcao-pagamento selecionada">
+        <input type="radio" name="pagamento" value="PIX" checked> 
+        PIX <small>(aprovacao imediata)</small>
+      </label>
+
+      <!-- Opção 2: Pagar na Retirada (só aparece se escolheu RETIRADA) -->
+      <label class="opcao-pagamento oculto" id="opcaoRetiradaPresencial">
+        <input type="radio" name="pagamento" value="RETIRADA_PRESENCIAL"> 
+        Pagar na retirada (Débito / Crédito) <small>(máquina física)</small>
+      </label>
+
+    </div>
+    <div class="sheet-footer">
+      <div class="linha"><span>Subtotal</span><span id="sumSubtotalCheckout"></span></div>
+      <div class="linha" id="linhaTaxaCheckout"><span>Taxa de entrega</span><span id="sumEntregaCheckout">R$ 0,00</span></div>
+      <div class="linha total"><span>Total</span><span id="totalCheckout">R$ 0,00</span></div>
+      <button class="btn-primario" id="btnFazerPedido">Fazer pedido</button>
+    </div>
+  </section>
+
+  <!-- ===== SHEET: PIX / STATUS ===== -->
+  <section class="sheet" id="sheetPix">
+    <div class="sheet-header"><h2 id="pixTitulo">Pague com PIX</h2></div>
+    <div class="sheet-body centralizado">
+      <img id="pixQr" class="pix-qr" alt="QR Code PIX">
+      <p class="pix-info">Escaneie o QR Code ou use o copia e cola no app do seu banco. O pedido &#233; confirmado automaticamente.</p>
+      <textarea id="pixCopia" readonly rows="3"></textarea>
+      <button class="btn-secundario" id="btnCopiarPix">Copiar c&#243;digo PIX</button>
+      <div class="status-pedido" id="statusPedido">&#9203; Aguardando pagamento&#8230;</div>
+    </div>
+  </section>
+
+  <!-- ===== CARTAO: INSTALAR O APP ===== -->
+  <div class="install-banner" id="installBanner" role="dialog" aria-label="Instalar aplicativo">
+    <div class="ib-inner">
+      <button class="ib-close" id="btnInstallClose" type="button" aria-label="Dispensar">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="ib-head">
+        <div class="ib-iconwrap">
+          <img id="installIcon" src="icons/icon-192.png" alt="">
+          <span class="ib-ring" aria-hidden="true"></span>
+        </div>
+        <div class="ib-text">
+          <span class="ib-eyebrow">Baixe o app</span>
+          <strong class="ib-title">Instale na sua tela inicial</strong>
+          <p class="ib-sub">Abra a Espetaria em 1 toque, sem precisar digitar o site.</p>
+        </div>
+      </div>
+      <div class="ib-ios" id="installIosSteps" hidden>
+        <p class="ib-ios-t">Como instalar no iPhone:</p>
+        <ol>
+          <li>Toque no bot&#227;o <b>Compartilhar</b>
+            <svg class="ib-share" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M8 8l4-4 4 4"/><rect x="4" y="13" width="16" height="8" rx="2.5"/></svg>
+            do Safari.
+          </li>
+          <li>Role a lista e toque em <b>Adicionar &#224; Tela de In&#237;cio</b>.</li>
+          <li>Confirme em <b>Adicionar</b>. Pronto!</li>
+        </ol>
+      </div>
+      <div class="ib-generic" id="installGeneric" hidden>
+        N&#227;o apareceu a op&#231;&#227;o autom&#225;tica? Toque no menu do navegador
+        (<b>&#8942;</b> ou <b>&#8943;</b>) e escolha <b>Instalar app</b> / <b>Adicionar &#224; tela inicial</b>.
+      </div>
+      <button class="ib-install" id="btnInstall" type="button">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11"/><path d="M8 11l4 4 4-4"/><path d="M5 20h14"/></svg>
+        <span>Instalar app</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== SCRIPTS ===== -->
+ 
+ <script src="js/app.js?v=43"></script>
+</body>
+</html>

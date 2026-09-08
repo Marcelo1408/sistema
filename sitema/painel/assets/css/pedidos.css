@@ -1,0 +1,279 @@
+.dashboard{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+margin-bottom:25px;
+}
+
+.card-info{
+background:#fff;
+padding:20px;
+border-radius:15px;
+box-shadow:0 3px 12px rgba(0,0,0,.08);
+text-align:center;
+}
+
+.card-info h2{
+margin:0;
+font-size:28px;
+}
+
+.card-info p{
+margin-top:10px;
+color:#666;
+}
+
+.filtros{
+margin-bottom:25px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.filtros a{
+padding:10px 15px;
+background:#fff;
+border-radius:8px;
+text-decoration:none;
+color:#333;
+box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+
+.pedidos-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+gap:20px;
+}
+
+.pedido-card{
+background:#fff;
+padding:20px;
+border-radius:15px;
+box-shadow:0 4px 15px rgba(0,0,0,.08);
+transition: all 0.3s ease;
+position: relative;
+cursor: pointer;
+}
+
+.pedido-card.novo-pedido {
+animation: piscar 0.8s ease-in-out infinite;
+border: 3px solid #ffc107;
+background: #fff9e6;
+box-shadow: 0 0 30px rgba(255, 193, 7, 0.3);
+}
+
+.pedido-card.novo-pedido-destaque {
+animation: piscar-forte 0.5s ease-in-out infinite;
+border: 3px solid #ff6b00;
+background: #fff0e6;
+box-shadow: 0 0 50px rgba(255, 107, 0, 0.5);
+}
+
+@keyframes piscar {
+0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); transform: scale(1); }
+50% { box-shadow: 0 0 30px 15px rgba(255, 193, 7, 0.3); transform: scale(1.02); }
+100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); transform: scale(1); }
+}
+
+@keyframes piscar-forte {
+0% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.8); transform: scale(1); background: #fff0e6; }
+50% { box-shadow: 0 0 50px 25px rgba(255, 107, 0, 0.4); transform: scale(1.03); background: #ffe0cc; }
+100% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.8); transform: scale(1); background: #fff0e6; }
+}
+
+.pedido-card.aberto {
+border-color: #198754;
+animation: none !important;
+}
+
+.pedido-card .badge-novo {
+position: absolute;
+top: -10px;
+right: -10px;
+background: #ff0000;
+color: white;
+padding: 5px 10px;
+border-radius: 50%;
+font-size: 12px;
+font-weight: bold;
+animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+0% { transform: scale(1); }
+50% { transform: scale(1.2); }
+100% { transform: scale(1); }
+}
+
+.status{
+display:inline-block;
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+margin-top:10px;
+}
+
+.PAGO{background:#d4edda;}
+.AGUARDANDO_PAGAMENTO{background:#fff3cd;}
+.AGUARDANDO_PIX{background:#fff3cd;}
+.EM_PREPARO{background:#cfe2ff;}
+.PRONTO{background:#cff4fc;}
+.SAIU_ENTREGA{background:#e2e3e5;}
+.ENTREGUE{background:#d1e7dd;}
+.CONFIRMADO_CLIENTE{background:#badbcc;}
+.CANCELADO{background:#f8d7da;}
+
+.acoes{
+margin-top:15px;
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+}
+
+.btn{
+padding:8px 12px;
+border-radius:6px;
+text-decoration:none;
+color:#fff;
+font-size:13px;
+border: none;
+cursor: pointer;
+transition: opacity 0.3s;
+}
+
+.btn:hover{
+opacity: 0.8;
+}
+
+.ver{background:#0d6efd;}
+.pago{background:#198754;}
+.preparo{background:#fd7e14;}
+.pronto{background:#20c997;}
+.entrega{background:#6c757d;}
+.entregue{background:#198754;}
+.cancelar{background:#dc3545;}
+
+.vazio{
+background:#fff;
+padding:50px;
+text-align:center;
+border-radius:15px;
+box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.top-controls {
+display: flex;
+gap: 15px;
+align-items: center;
+margin-bottom: 25px;
+flex-wrap: wrap;
+}
+
+.btn-loja {
+padding: 12px 20px;
+border: none;
+border-radius: 8px;
+font-weight: bold;
+cursor: pointer;
+transition: all 0.3s ease;
+font-size: 16px;
+min-width: 120px;
+}
+
+.btn-loja.abrir {
+background: #28a745;
+color: white;
+}
+
+.btn-loja.abrir:hover {
+background: #218838;
+}
+
+.btn-loja.fechar {
+background: #dc3545;
+color: white;
+}
+
+.btn-loja.fechar:hover {
+background: #c82333;
+}
+
+.btn-som {
+padding: 12px 20px;
+border: none;
+border-radius: 8px;
+font-weight: bold;
+cursor: pointer;
+transition: all 0.3s ease;
+font-size: 16px;
+background: #6c757d;
+color: white;
+min-width: 140px;
+}
+
+.btn-som.ativo {
+background: #007bff;
+}
+
+.btn-som.ativo:hover {
+background: #0056b3;
+}
+
+.status-loja {
+padding: 12px 20px;
+border-radius: 8px;
+font-weight: bold;
+font-size: 14px;
+}
+
+.status-loja.aberta {
+background: #d4edda;
+color: #155724;
+}
+
+.status-loja.fechada {
+background: #f8d7da;
+color: #721c24;
+}
+
+.loja-fechada-banner {
+background: #f8d7da;
+color: #721c24;
+padding: 20px;
+border-radius: 10px;
+text-align: center;
+margin-bottom: 20px;
+border: 2px solid #f5c6cb;
+}
+
+.info-expediente {
+background: #cce5ff;
+color: #004085;
+padding: 15px 20px;
+border-radius: 10px;
+text-align: center;
+margin-bottom: 20px;
+border: 2px solid #b8daff;
+}
+
+.notificacao-pedido {
+position: fixed;
+top: 20px;
+right: 20px;
+background: #ff6b00;
+color: white;
+padding: 20px 30px;
+border-radius: 10px;
+box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+z-index: 9999;
+animation: slideIn 0.5s ease-out;
+font-size: 18px;
+font-weight: bold;
+max-width: 400px;
+}
+
+@keyframes slideIn {
+from { transform: translateX(100%); opacity: 0; }
+to { transform: translateX(0); opacity: 1; }
+}

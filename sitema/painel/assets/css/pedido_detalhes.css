@@ -1,0 +1,144 @@
+.detalhes-card{
+    background:#fff;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 3px 15px rgba(0,0,0,.08);
+    margin-bottom:20px;
+}
+
+.titulo{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.status{
+    display:inline-block;
+    padding:8px 15px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:bold;
+    background:#f1f1f1;
+}
+
+.bloco{
+    background:#fafafa;
+    border:1px solid #eee;
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:15px;
+}
+
+.bloco h3{
+    margin:0 0 12px 0;
+}
+
+.info{
+    margin:0 0 8px 0;
+    line-height:1.45;
+}
+
+.info strong{
+    color:#333;
+}
+
+.endereco-linha{
+    line-height:1.55;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+}
+
+table th,
+table td{
+    padding:12px;
+    border-bottom:1px solid #eee;
+    text-align:left;
+    vertical-align:top;
+}
+
+table th{
+    background:#f8f8f8;
+}
+
+.produto-nome{
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.adicionais{
+    margin-top:8px;
+    padding:10px;
+    background:#f3f4f6;
+    border-radius:8px;
+    font-size:14px;
+}
+
+.adicionais strong{
+    display:block;
+    margin-bottom:5px;
+    color:#333;
+}
+
+.adicionais ul{
+    margin:0;
+    padding-left:18px;
+}
+
+.adicionais li{
+    margin-bottom:3px;
+}
+
+.resumo-pagamento{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:10px;
+}
+
+.total{
+    font-size:24px;
+    font-weight:bold;
+    margin-top:20px;
+    color:#198754;
+    text-align:right;
+}
+
+.botoes{
+    display:flex;
+    gap:10px;
+    margin-top:25px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    padding:10px 15px;
+    border-radius:8px;
+    text-decoration:none;
+    color:#fff;
+    font-size:14px;
+}
+
+.voltar{ background:#6c757d; }
+.imprimir{ background:#0d6efd; }
+.preparo{ background:#fd7e14; }
+.pronto{ background:#20c997; }
+.entrega{ background:#6c757d; }
+.entregue{ background:#198754; }
+.cancelado{ background:#dc3545; }
+
+@media(max-width:700px){
+    table th:nth-child(3),
+    table td:nth-child(3){
+        display:none;
+    }
+
+    .total{
+        text-align:left;
+    }
+}
