@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14100c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Hamburgueria - Pedido Online</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+  <div class="header-topo">
+    <img id="logoLoja" src="icons/icon-192.png" alt="Logo">
+    <div class="header-info">
+      <h1 id="nomeLoja">Hamburgueria</h1>
+      <button class="header-entrega" id="btnEndereco">
+        <span class="entrega-label">Entregar em</span>
+        <span class="entrega-endereco" id="resumoEndereco">Informe seu endereco &#8250;</span>
+      </button>
+    </div>
+    <span id="badgeLoja" class="badge">&#8230;</span>
+  </div>
+  <div class="busca"><input id="inputBusca" type="search" placeholder="Busque por X-tudo,X-bancon,X-Salada,bebidas&#8230;"></div>
+  <section id="blocoDestaques" class="destaques-wrap oculto" aria-label="Promoções em destaque"></section>
+  <nav id="chipsCategorias" class="chips" aria-label="Categorias"></nav>
+</header>
+
+<div id="bannerFechada" class="banner-fechada oculto"></div>
+<main id="cardapio"><p class="carregando">Carregando card&#225;pio&#8230;</p></main>
+
+<div id="barraSacola" class="barra-sacola oculto">
+  <button id="btnVerSacola">
+    <span><b id="sacolaQtd">0</b> itens</span>
+    <span>Ver sacola &#8250;</span>
+    <b id="sacolaTotal">R$ 0,00</b>
+  </button>
+</div>
+
+<div id="overlay" class="overlay oculto"></div>
+
+<!-- SHEET: PRODUTO -->
+<section class="sheet" id="sheetProduto">
+  <div class="sheet-header"><h2 id="prodNome"></h2><button class="fechar" data-close>&#10005;</button></div>
+  <div class="sheet-body">
+    <img id="prodImg" class="prod-modal-img" alt="">
+    <p id="prodDesc" class="prod-desc"></p>
+  </div>
+  <div class="sheet-footer">
+    <div class="stepper"><button id="prodMenos">&#8722;</button><span id="prodQtd">1</span><button id="prodMais">+</button></div>
+    <button class="btn-primario" id="btnAddCarrinho">Adicionar <span id="prodTotal"></span></button>
+  </div>
+</section>
+
+<!-- SHEET: SACOLA -->
+<section class="sheet" id="sheetSacola">
+  <div class="sheet-header"><h2>Sua sacola</h2><button class="fechar" data-close>&#10005;</button></div>
+  <div class="sheet-body" id="sacolaItens"></div>
+  <div class="sheet-footer">
+    <div class="linha"><span>Subtotal</span><span id="sumSubtotal"></span></div>
+    <div class="linha"><span>Taxa de entrega</span><span id="sumEntrega">&#8212;</span></div>
+    <div class="linha total"><span>Total</span><span id="sumTotal"></span></div>
+    <button class="btn-primario" id="btnContinuar">Continuar</button>
+  </div>
+</section>
+
+<!-- SHEET: ENDERECO -->
+<section class="sheet" id="sheetEndereco">
+  <div class="sheet-header"><h2>Endere&#231;o de entrega</h2><button class="fechar" data-close>&#10005;</button></div>
+  <div class="sheet-body">
+    <div class="form-grid">
+      <label>CEP<input id="fCep" inputmode="numeric" placeholder="13183-623"></label>
+      <label class="col-8">Rua / Avenida<input id="fEndereco" placeholder="Rua Vit&#243;ria"></label>
+      <label class="col-4">N&#250;mero<input id="fNumero" placeholder="560"></label>
+      <label class="col-6">Bairro<input id="fBairro" placeholder="Parque do Horto"></label>
+      <label class="col-6">Cidade<input id="fCidade" placeholder="Hortol&#226;ndia"></label>
+      <label class="col-4">UF<input id="fUf" maxlength="2" placeholder="SP"></label>
+      <label class="col-8">Complemento <small>(opcional)</small><input id="fComplemento" placeholder="Casa fundo"></label>
+      <label class="col-12">Refer&#224;ncia <small>(opcional)</small><input id="fReferencia" placeholder="Port&#227;o verde"></label>
+    </div>
+  </div>
+  <div class="sheet-footer"><button class="btn-primario" id="btnSalvarEndereco">Salvar endere&#231;o</button></div>
+</section>
+
+<!-- SHEET: LOGIN / CADASTRO (WhatsApp) -->
+<section class="sheet" id="sheetLogin">
+  <div class="sheet-header login-header">
+    <div class="login-titulo">
+      <span class="login-icone">&#128100;</span>
+      <div><h2>Identifique-se</h2><p class="login-sub">Para finalizar, informe seu WhatsApp</p></div>
+    </div>
+    <button class="fechar" data-close>&#10005;</button>
+  </div>
+  <div class="sheet-body">
+    <p class="login-intro">Se voc&#234; j&#225; pediu conosco, seu cadastro aparece na hora. Se for a primeira vez, criamos seu cadastro automaticamente.</p>
+    <div class="login-campo"><label for="loginTel">WhatsApp (com DDD)</label><input id="loginTel" inputmode="tel" autocomplete="tel" placeholder="(19) 9 0000-0000"></div>
+    <div class="login-campo oculto" id="loginNomeWrap"><label for="loginNome">Nome completo</label><input id="loginNome" autocomplete="name" placeholder="Seu nome completo"></div>
+    <div class="login-status" id="loginStatus" hidden></div>
+    <div class="cliente-card oculto" id="clienteCard"></div>
+  </div>
+  <div class="sheet-footer"><button class="btn-primario" id="btnLoginAcao" disabled>Continuar</button></div>
+</section>
+
+<!-- SHEET: PAGAMENTO -->
+<section class="sheet" id="sheetPagamento">
+  <div class="sheet-header"><h2>Finalizar pedido</h2><button class="fechar" data-close>&#10005;</button></div>
+  <div class="sheet-body">
+    <div class="cliente-resumo" id="resumoCliente"></div>
+
+    <div class="pagamento-titulo" style="margin-top:16px;">Como voc&#234; quer receber?</div>
+    <div class="opcoes-tipo-pedido" style="display:flex; gap:8px; margin-bottom:16px;">
+      <label class="opcao-pagamento selecionada" style="flex:1; text-align:center;" id="labelEntrega">
+        <input type="radio" name="tipoPedido" value="entrega" checked> &#128757; Entregar
+      </label>
+      <label class="opcao-pagamento" style="flex:1; text-align:center;" id="labelRetirada">
+        <input type="radio" name="tipoPedido" value="retirada"> &#127968; Retirar (balc&#227;o)
+      </label>
+    </div>
+
+    <div id="blocoEnderecoEntrega"><div class="resumo-endereco" id="resumoEnderecoCheckout"></div></div>
+    <div id="blocoAvisoRetirada" class="oculto" style="background:#f0f8ff; padding:12px; border-radius:8px; margin-bottom:16px; border-left:4px solid #EA1D2C;">
+      <strong>&#128205; Retirada no balc&#227;o</strong>
+      <p style="margin:4px 0 0; font-size:14px; color:#555;">Voc&#234; n&#227;o paga taxa de entrega.</p>
+    </div>
+
+    <div class="pagamento-titulo">Forma de pagamento</div>
+    <label class="opcao-pagamento selecionada" id="opcaoPix">
+      <input type="radio" name="pagamento" value="PIX" checked> PIX <small>(aprova&#231;&#227;o imediata)</small>
+    </label>
+    <label class="opcao-pagamento" id="opcaoCartao">
+      <input type="radio" name="pagamento" value="CARTAO_CREDITO"> Cart&#227;o de cr&#233;dito <small>(parcelado no app)</small>
+    </label>
+    <label class="opcao-pagamento oculto" id="opcaoRetiradaPresencial">
+      <input type="radio" name="pagamento" value="RETIRADA_PRESENCIAL"> Pagar na retirada <small>(d&#233;bito/cr&#233;dito na maquininha)</small>
+    </label>
+  </div>
+  <div class="sheet-footer">
+    <div class="linha"><span>Subtotal</span><span id="sumSubtotalCheckout"></span></div>
+    <div class="linha" id="linhaTaxaCheckout"><span>Taxa de entrega</span><span id="sumEntregaCheckout">R$ 0,00</span></div>
+    <div class="linha total"><span>Total</span><span id="totalCheckout">R$ 0,00</span></div>
+    <button class="btn-primario" id="btnFazerPedido">Fazer pedido</button>
+  </div>
+</section>
+
+<!-- SHEET: CARTAO DE CREDITO -->
+<section class="sheet" id="sheetCartao">
+  <div class="sheet-header"><h2>Pagar com cart&#227;o</h2><button class="fechar" data-close>&#10005;</button></div>
+  <div class="sheet-body">
+    <p class="pix-info">Valor a cobrar: <strong id="cartaoValor">R$ 0,00</strong></p>
+    <div class="form-grid">
+      <label class="col-12">N&#250;mero do cart&#227;o<input id="cartNumero" inputmode="numeric" placeholder="0000 0000 0000 0000" autocomplete="cc-number"></label>
+      <label class="col-12">Nome impresso no cart&#227;o<input id="cartNome" placeholder="MARIA S SILVA" autocomplete="cc-name"></label>
+      <label class="col-4">Validade<input id="cartValidade" inputmode="numeric" placeholder="MM/AA" autocomplete="cc-exp"></label>
+      <label class="col-4">CVV<input id="cartCvv" inputmode="numeric" placeholder="123" autocomplete="cc-csc"></label>
+      <label class="col-4">CPF <small>(opcional)</small><input id="cartCpf" inputmode="numeric" placeholder="000.000.000-00"></label>
+      <label class="col-6">Bandeira<span id="cartBandeira" style="display:block; font-weight:bold; color:#333;">&#8212;</span></label>
+      <label class="col-6">Parcelas<select id="cartParcelas"></select></label>
+    </div>
+    <p id="cartaoStatus" style="color:#dc3545; font-size:14px; min-height:18px;"></p>
+  </div>
+  <div class="sheet-footer"><button class="btn-primario" id="btnPagarCartao">Pagar agora</button></div>
+</section>
+
+<!-- SHEET: PIX / STATUS -->
+<section class="sheet" id="sheetPix">
+  <div class="sheet-header"><h2 id="pixTitulo">Pague com PIX</h2></div>
+  <div class="sheet-body centralizado">
+    <img id="pixQr" class="pix-qr" alt="QR Code PIX">
+    <p class="pix-info">Escaneie o QR Code ou use o copia e cola no app do seu banco.</p>
+    <textarea id="pixCopia" readonly rows="3"></textarea>
+    <button class="btn-secundario" id="btnCopiarPix">Copiar c&#243;digo PIX</button>
+    <div class="status-pedido" id="statusPedido">&#9203; Aguardando pagamento&#8230;</div>
+  </div>
+</section>
+
+<script src="js/app.js"></script>
+</body>
+</html>

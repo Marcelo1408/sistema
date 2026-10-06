@@ -1,0 +1,32 @@
+# Dependências e build
+node_modules/
+.wrangler/
+.dev/
+
+# Secrets locais (NENHUM TOKEN PODE SUBIR)
+.dev.vars
+.env
+.env.*
+*.env
+
+# Banco local
+*.sqlite
+*.sqlite-journal
+*.sqlite-shm
+*.sqlite-wal
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# Arquivos de config que podem conter IDs sensíveis
+# (você vai criar um exemplo separado)
+wrangler.toml
+wrangler.jsonc
+
+# Exceto o exemplo seguro
+!wrangler.toml.example
+!wrangler.jsonc.example
